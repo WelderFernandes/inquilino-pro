@@ -39,7 +39,7 @@ const SignIn1 = () => {
         </div>
         {/* Title */}
         <h2 className="mb-6 text-center text-2xl font-semibold text-white">
-          HextaUI
+          Alugue
         </h2>
         {/* Form */}
         <div className="flex w-full flex-col gap-4">
@@ -81,12 +81,12 @@ const SignIn1 = () => {
             </button>
             <div className="mt-2 w-full text-center">
               <span className="text-xs text-gray-400">
-                Don&apos;t have an account?{' '}
+                Don't have an account?{' '}
                 <a
                   href="#"
                   className="text-white/80 underline hover:text-white"
                 >
-                  Sign up, it&apos;s free!
+                  Sign up, it's free!
                 </a>
               </span>
             </div>
