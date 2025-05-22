@@ -30,15 +30,12 @@ export function SignInForm() {
 
   async function onSubmit(values: z.infer<typeof signInSchema>) {
     try {
-      const result = await signIn('credentials', {
+      await signIn('credentials', {
         email: values.email,
         password: values.password,
-        redirect: false,
+        redirect: true,
+        callbackUrl: '/dashboard',
       })
-
-      if (result?.error) {
-        throw new Error(result.error)
-      }
 
       alert('Sign in successful!')
     } catch (error) {
