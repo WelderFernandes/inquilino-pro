@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import Image from 'next/image'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -19,6 +19,7 @@ const signInSchema = z.object({
 })
 
 export function SignInForm() {
+  const { data } = useSession()
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -49,6 +50,7 @@ export function SignInForm() {
   return (
     <div className="">
       <div className="relative z-10 flex w-full max-w-sm flex-col items-center rounded-3xl bg-radial-[at_25%_25%] from-zinc-700/60 to-zinc-900/60 to-75% p-8 shadow-2xl backdrop-blur-sm">
+        <pre>{JSON.stringify(data, null, 2)}</pre>
         <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 shadow-lg">
           <Image
             src="http://hextaui.com/logo.svg"
@@ -57,7 +59,6 @@ export function SignInForm() {
             height={48}
           />
         </div>
-
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -124,7 +125,7 @@ export function SignInForm() {
                 <span className="text-xs text-gray-400">
                   Dont have an account?{' '}
                   <a
-                    href="#"
+                    href="./sign-up"
                     className="text-white/80 underline hover:text-white"
                   >
                     Sign up, its free!

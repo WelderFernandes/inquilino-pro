@@ -8,17 +8,27 @@ export const authConfig = {
     signIn: '/auth/sign-in',
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const isOnDashboard = nextUrl.pathname.startsWith('/')
-
-      if (isOnDashboard) {
-        if (isLoggedIn) return true
-        return false
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL('/', nextUrl))
+    async session({ session, token }) {
+      const user = await prisma.user.findUnique({
+        where: {
+          email: token.email!,
+        },
+      })
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          avatarUrl: user?.image,
+          id: token.sub,
+          emailVerified: token.emailVerified,
+        },
       }
-      return true
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id
+      }
+      return token
     },
   },
   providers: [
@@ -31,6 +41,7 @@ export const authConfig = {
           placeholder: 'email@example.com',
         },
         password: { label: 'Password', type: 'password' },
+        remember: { label: 'Remember me', type: 'checkbox' },
       },
       async authorize(credentials) {
         try {
@@ -60,12 +71,7 @@ export const authConfig = {
           if (!passwordMatch) {
             throw new Error('Invalid credentials')
           }
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          }
+          return user
         } catch (error) {
           console.error('Authentication error:', error)
           return null
@@ -73,4 +79,6 @@ export const authConfig = {
       },
     }),
   ],
+  debug: process.env.NODE_ENV === 'development',
+  useSecureCookies: process.env.NODE_ENV === 'production',
 } satisfies NextAuthConfig
